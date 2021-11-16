@@ -26,6 +26,13 @@ def TaskList(request):
     serializer = TaskSerializer(tasks , many = True)
     return Response(serializer.data)
 
+@api_view(["GET"])
+@permission_classes((permissions.AllowAny,))
+def TaskDetail(request , pk):
+    tasks = Task.objects.get(id=pk)
+    serializer = TaskSerializer(tasks , many = False)
+    return Response(serializer.data)
+
 
 @api_view(["POST"])
 @permission_classes((permissions.AllowAny,))
@@ -34,5 +41,23 @@ def TaskCreate(request):
     if(serializer.is_valid()):
         serializer.save()
     return Response(serializer.data)
+
+
+@api_view(["POST"])
+@permission_classes((permissions.AllowAny,))
+def TaskUpdate(request , pk):
+    task = Task.objects.get(id = pk)
+    serializer = TaskSerializer(instance = task ,  data = request.data)
+    if(serializer.is_valid()):
+        serializer.save()
+    return Response(serializer.data)
+
+
+@api_view(["DELETE"])
+@permission_classes((permissions.AllowAny,))
+def TaskDelete(request , pk):
+    task = Task.objects.get(id = pk)
+    task.delete()
+    return Response("Task Deleted Successfully")
 
 
